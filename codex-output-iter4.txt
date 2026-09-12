@@ -1,0 +1,44 @@
+Implemented Iteration 4 without committing.
+
+Files changed:
+
+- `src/server/game.ts`
+- `src/server/server.ts`
+- `src/shared/types.ts`
+- `src/client/client.ts`
+- `src/client/styles.css`
+- `src/smoke/smoke.ts`
+- `README.md`
+- `CODEX_HANDOFF.md`
+
+Key decisions:
+
+- Existing saves normalize missing fields as already stipended, non-rookie, and zero slip claims, preventing migration-time duplicate grants.
+- Slip thresholds use tier values `40/120/400/1500`; `SLIP_PRICE_CEILING` is a multiplier.
+- Qualifying active leading bids reserve claim capacity, preventing parallel-auction bypasses.
+- Established players receive the normal 500 coins during season reset and are marked already stipended.
+- Rookie state and slip history clear at season end.
+
+Exact final smoke output:
+
+```text
+> bid-house@1.0.0 smoke
+> npm run build && node dist/smoke/smoke.js
+
+> bid-house@1.0.0 build
+> tsc && node scripts/copy-static.mjs
+
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-1 price=10 count=1
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-2 price=10 count=2
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-3 price=10 count=3
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-4 price=10 count=4
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-5 price=10 count=5
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-6 price=10 count=6
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-7 price=10 count=7
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-8 price=10 count=8
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-9 price=10 count=9
+[slip] player=9cef4da6-3c07-4dfe-a323-d5411664c9f2 auction=slip-auction-10 price=10 count=10
+SMOKE PASS: house 1 booted; registration and deployment succeeded; JOIN-before-deploy rejected; HOUSE_CAP=1 listing spawned house 2; second character deployed cross-house; redeploy set a 24h cooldown and blocked abilities; featured promotion settled with +25 fame; specialty orders met 50% bias; season reset kept houses/deployments, cleared cooldowns, and regenerated 6 orders per house; schema-v2 persistence preserved houses/deployments; public house detail preserved seller/fake privacy; 30h late join awarded 750 once; final-window join exposed rookie=true and season end cleared it; 10th sub-ceiling win succeeded, 11th was rejected, and above-ceiling bidding remained unlimited; persistence preserved stipend, rookie, and slip counters.
+```
+
+Deviations: none from the brief. I added the stricter pending-lead reservation described above. Browser/device visual QA was not run; automated build and smoke are clean. The pre-existing untracked `.hermes/codex-iter4-brief.md` was left untouched.

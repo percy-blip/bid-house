@@ -1,10 +1,10 @@
 # Bid House handoff
 
-- Goal: Iteration 3 dynamic multi-house world.
-- Phase/status: production implementation complete; strict build and expanded automated smoke pass.
-- Latest work: moved auctions, orders, featured schedules, fee rates, specialty tags, and deployments into persistent house state; added deploy/redeploy/enter-house protocol and per-socket active-house projections; added house browser/switcher, cooldown display, featured treatment, schema-v1 migration, and season-safe house resets.
-- Owners: `src/server/game.ts` owns authoritative global/house rules and schema migration; `src/server/server.ts` owns active-house socket context and scoped broadcasts; `src/client/client.ts` owns browser/deployment/in-house presentation; `src/smoke/smoke.ts` owns the Iteration 3 proof.
-- Verification: `npm.cmd run smoke` passes, including nested strict build, initial house, deploy/JOIN guard, HOUSE_CAP spawn, cross-house deployment, 24h redeploy cooldown and ability block, featured selection/reward, deterministic 50% specialty order floor, season preservation/reset, schema-v2 round trip, and public privacy projection.
-- Design decisions: only one character per player may occupy a given house; listing fee is duration multiplied by house fee rate (rounded up), while sale proceeds also use the house rate; featured fame is 25% of winning bid (rounded up); a capped listing only spawns when no other house has spare capacity.
-- Risks/unverified: browser interaction and responsive/device visual QA were not run. Existing schema-v1 snapshots migrate into Grand Exchange with each legacy player's selected character deployed and legacy auctions/orders preserved.
-- Next safest task: manual desktop and narrow-mobile pass of first deployment, multi-house switch/redeploy controls, cooldown presentation, and featured card contrast.
+- Goal: Iteration 4 catch-up stipend, rookie marker, and slip-claim collusion limits.
+- Phase/status: maintenance implementation complete; strict build and expanded automated smoke pass.
+- Latest work: added idempotent per-season join stipends, late-season rookie state/public chips, rolling 24-hour cheap-win counters with pending-lead reservation and settlement logging, snapshot normalization, configuration docs, and focused smoke coverage.
+- Owners: `src/server/game.ts` owns authoritative join grants, rookie classification, slip qualification/counters, settlement, resets, and snapshot compatibility; `src/server/server.ts` carries one-time stipend metadata; `src/client/client.ts` renders stipend feedback and member chips; `src/smoke/smoke.ts` owns the Iteration 4 proof.
+- Verification: `npm.cmd run smoke` passes, including nested strict build, 30-hour/750-coin one-time stipend, public rookie flag and reset, ten qualifying wins, exact 11th-bid rejection, above-ceiling acceptance, `[slip]` logs, and schema-v2 round-trip of all new player fields.
+- Design decisions: existing schema-v1/v2 players missing Iteration 4 fields normalize as already-stipended/non-rookie/no claims to prevent migration grants; tier bases are 40/120/400/1500 and `SLIP_PRICE_CEILING` is a multiplier; currently led qualifying auctions reserve claim capacity so parallel auctions cannot bypass the win cap; established players receive the normal 500 during hard reset and are marked already-stipended for the new season.
+- Risks/unverified: browser interaction and responsive/device visual QA were not run; environment values are bounded but malformed numeric strings follow the project's existing numeric-env behavior.
+- Next safest task: manual desktop and narrow-mobile pass for the stipend toast and crowded house-member rookie chips.

@@ -23,6 +23,11 @@ Open `http://localhost:3000`. `npm run smoke` builds and verifies the multi-hous
 | `HOUSE_CAP` | `8` | Unique deployed players at which a listing can spawn another house |
 | `MAX_DEPLOYS` | `3` | Maximum simultaneous character deployments per player |
 | `FEATURED_INTERVAL_MINUTES` | `30` | Per-house featured-auction interval |
+| `JOIN_STIPEND_AFTER_HOURS` | `24` | Season age after which a first join receives the catch-up calculation |
+| `JOIN_STIPEND_MAX` | `2000` | Maximum one-time catch-up stipend in coins |
+| `ROOKIE_WINDOW_HOURS` | `336` | Remaining season hours below which a first-time entrant is marked rookie |
+| `SLIP_CLAIM_MAX` | `10` | Maximum qualifying low-price auction wins per rolling 24 hours |
+| `SLIP_PRICE_CEILING` | `0.15` | Tier base-value multiplier at or below which a win is a slip claim |
 
 Snapshots are debounced by about two seconds and atomically replaced. Schema version 2 persists accounts, tokens, global players/items, houses and their deployments/markets, private peeks, and the global season. Mount a persistent volume for `DATA_DIR` on ephemeral hosts such as Railway.
 
@@ -35,6 +40,9 @@ Snapshots are debounced by about two seconds and atomically replaced. Schema ver
 - A house listing charges its fee and its completed sale pays the seller net of that same rate.
 - Each specialty house keeps at least three of its six generated orders tagged for its specialty.
 - Featured selection prefers item tier, then listing fee paid, then earliest ending listing. A featured win grants bonus fame equal to 25% of the winning bid and the flag disappears with settlement.
+- A player's first join of a season grants 500 coins, or after `JOIN_STIPEND_AFTER_HOURS`, `500 + 250 * floor(hoursLate / 24)` up to `JOIN_STIPEND_MAX`. The grant is idempotent across reconnects.
+- Players whose first seasonal join occurs with less than `ROOKIE_WINDOW_HOURS` remaining are shown with a 🌱 marker until season end.
+- Slip wins use tier base values of 40, 120, 400, and 1500. A player may win at most `SLIP_CLAIM_MAX` auctions at or below `SLIP_PRICE_CEILING` times that value in a rolling 24-hour window; higher-price wins are unrestricted.
 - A season end settles listings, resets global progression/inventory, clears house auctions/orders, regenerates six orders per house, preserves deployments/houses, and clears redeploy cooldowns.
 
 Seller identity and authenticity remain absent from live public auction projections. Coins and inventory remain owner-only.
