@@ -1,0 +1,45 @@
+Implemented the noir-gold UI overhaul without changing server protocol or game logic. No commit was created.
+
+Files changed:
+
+- [index.html](C:/Users/Crimson/Projects/bid-house/src/client/index.html)
+- [styles.css](C:/Users/Crimson/Projects/bid-house/src/client/styles.css)
+- [client.ts](C:/Users/Crimson/Projects/bid-house/src/client/client.ts)
+- [smoke.ts](C:/Users/Crimson/Projects/bid-house/src/smoke/smoke.ts)
+- [CODEX_HANDOFF.md](C:/Users/Crimson/Projects/bid-house/CODEX_HANDOFF.md)
+
+Screen notes:
+
+- Auth: split branded entrance and login/register card with inline errors.
+- Character Select: six-character portrait carousel with passives, abilities, and traits.
+- House Browser: deterministic layered sigils, specialty/fee/prime/member data, segmented heat, live counts, pinned deployments, and cooldowns.
+- Auction Hall: responsive `3|6|3` layout with character/XP card, ability cooldowns and pips, private inventory ribbons, featured/live lots, countdown rings, contextual abilities, orders, and house ledger.
+- Overlays: box reveal, target selection, item actions, season end, settle vignette, anti-snipe chip, and four-second toasts.
+- Mobile: ≤720px single-panel layout with Floor/You/Board bottom navigation.
+- Privacy: fake ribbons use only `PrivateState.items`; appraisal seals use only `PrivateState.peeked`.
+
+Protocol-bound deviations:
+
+- Box price displays the server’s current 100-coin behavior because no public configuration field exists.
+- Target validity and inventory/order matches remain server-validated.
+- Season-end overlay uses current private fame/milestones because `SEASON_END` contains no result breakdown.
+
+Verification:
+
+```text
+UI BUNDLE PASS: index.html references styles.css and client.js.
+WS PRIVACY PASS: public auction STATE frame contains no fake field, sellerId, or seller name.
+SMOKE PASS: house 1 booted; registration and deployment succeeded; JOIN-before-deploy rejected; HOUSE_CAP=1 listing spawned house 2; second character deployed cross-house; redeploy set a 24h cooldown and blocked abilities; featured promotion settled with +25 fame; specialty orders met 50% bias; season reset kept houses/deployments, cleared cooldowns, and regenerated 6 orders per house; schema-v2 persistence preserved houses/deployments; public house detail preserved seller/fake privacy; 30h late join awarded 750 once; final-window join exposed rookie=true and season end cleared it; 10th sub-ceiling win succeeded, 11th was rejected, and above-ceiling bidding remained unlimited; persistence preserved stipend, rookie, and slip counters.
+```
+
+Also passed:
+
+- `npm.cmd run build`
+- `npm.cmd run verify-assets`: 71 expected, none missing/unexpected/failed, manifest matched
+- `git diff --check`
+
+Remaining manual QA:
+
+- Browser surfaces were unavailable to the UI automation runtime, so 1440×900 and 390×844 screenshots were not captured.
+- Manually verify carousel centering, crowded auction wrapping, target modal flows, reveal timing, reduced motion, touch sizing, and mobile safe-area navigation.
+- Existing untracked `.hermes/codex-ui-brief.md` was left untouched.

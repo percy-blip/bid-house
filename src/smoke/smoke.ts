@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdtemp,rm,writeFile } from "node:fs/promises";
+import { mkdtemp,readFile,rm,writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { GameError,GameState } from "../server/game.js";
@@ -11,6 +11,7 @@ const check=(ok:unknown,message:string)=>{if(!ok)throw new Error(message);};
 async function run(){try{
  while(!log.includes("listening")){if(server.exitCode!==null)throw new Error(`Server exited early: ${log}`);await wait(20);}
  const initial=await fetch(`http://127.0.0.1:${port}`);check(initial.ok,"Server boot failed");
+ const html=await initial.text(),sourceHtml=await readFile("src/client/index.html","utf8");check(html.includes('href="styles.css"')&&html.includes('src="client.js"')&&sourceHtml.includes('href="styles.css"')&&sourceHtml.includes('src="client.js"'),"UI bundle references missing from index.html");console.log("UI BUNDLE PASS: index.html references styles.css and client.js.");
  const game=new GameState(()=>{},1,undefined,{houseCap:1,maxDeploys:3,featuredIntervalMinutes:.001});check(game.houses.size===1&&game.houses.has("house-1"),"Boot did not create house 1");
  const a=await game.register("SmokeSeller","correct-horse-a"),b=await game.register("SmokeBuyer","correct-horse-b");
  let joinBlocked=false;try{game.join(a.playerId);}catch(e){joinBlocked=e instanceof GameError&&e.message.includes("Deploy");}check(joinBlocked,"JOIN did not require deployment");
@@ -23,7 +24,7 @@ async function run(){try{
  const specialty=game.houses.get("house-2")!;specialty.specialtyTag="royal";specialty.orders=[];game.forceEndSeason();check(specialty.orders.filter(o=>o.template.tag==="royal").length>=3,"Specialty order bias missing");
  const beforeHouses=game.houses.size,beforeDeploys=game.deployments(a.playerId).length;specialty.deployments[0]!.redeployCooldownUntil=Date.now()+86400000;const oldSeason=game.season.number;game.forceEndSeason();check(game.houses.size===beforeHouses&&game.deployments(a.playerId).length===beforeDeploys&&game.season.number===oldSeason+1,"Season did not preserve houses/deployments");check([...game.houses.values()].every(h=>h.auctions.length===0&&h.orders.length===6&&h.deployments.every(d=>d.redeployCooldownUntil===0)),"Season house reset/regeneration failed");
  await writeFile(statePath,JSON.stringify(game.snapshot()),"utf8");const restored=await GameState.load(statePath,()=>{},1,{houseCap:1,maxDeploys:3,featuredIntervalMinutes:.001});check(restored.houses.size===game.houses.size&&restored.deployments(a.playerId).length===beforeDeploys,"Persistence lost houses or deployments");
- const pub=restored.publicState(a.playerId,"house-1");check(pub.houses.length===beforeHouses&&!!pub.currentHouse&&!pub.currentHouse.auctions.some(x=>"fake" in x.item||"sellerId" in x),"Public state shape/privacy failed");
+ const pub=restored.publicState(a.playerId,"house-1"),publicAuctionFrame=JSON.stringify({type:"STATE",auctions:pub.currentHouse?.auctions});check(pub.houses.length===beforeHouses&&!!pub.currentHouse&&!pub.currentHouse.auctions.some(x=>"fake" in x.item||"sellerId" in x)&&!publicAuctionFrame.includes('"fake"')&&!publicAuctionFrame.includes('"sellerId"')&&!publicAuctionFrame.includes("SmokeSeller"),"Public WS auction frame exposed fake flag, seller id, or seller name");console.log("WS PRIVACY PASS: public auction STATE frame contains no fake field, sellerId, or seller name.");
  const economy=new GameState(()=>{},1000,undefined,{houseCap:20,rookieWindowHours:336,slipClaimMax:10,slipPriceCeiling:.15});economy.season.startedAt=Date.now()-30*3600000;economy.season.endsAt=Date.now()+500*3600000;
  const late=await economy.register("LateJoiner","correct-horse-c");economy.deploy(late.playerId,"house-1","mara");const firstJoin=economy.join(late.playerId);check(firstJoin.stipendAwarded===750&&firstJoin.player.coins===750,"30h late join did not receive 750 coins");const reconnect=economy.join(late.playerId);check(reconnect.stipendAwarded===undefined&&reconnect.player.coins===750,"Reconnect re-awarded stipend");
  economy.season.endsAt=Date.now()+100*3600000;const rookieAccount=await economy.register("RookieJoin","correct-horse-d");economy.deploy(rookieAccount.playerId,"house-1","brick");economy.join(rookieAccount.playerId);check(economy.publicState(rookieAccount.playerId,"house-1").players.find(p=>p.id===rookieAccount.playerId)?.rookie===true,"Late-season joiner was not public rookie");

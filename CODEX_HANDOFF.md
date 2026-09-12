@@ -1,10 +1,11 @@
 # Bid House handoff
 
-- Goal: Iteration 4 catch-up stipend, rookie marker, and slip-claim collusion limits.
-- Phase/status: maintenance implementation complete; strict build and expanded automated smoke pass.
-- Latest work: added idempotent per-season join stipends, late-season rookie state/public chips, rolling 24-hour cheap-win counters with pending-lead reservation and settlement logging, snapshot normalization, configuration docs, and focused smoke coverage.
-- Owners: `src/server/game.ts` owns authoritative join grants, rookie classification, slip qualification/counters, settlement, resets, and snapshot compatibility; `src/server/server.ts` carries one-time stipend metadata; `src/client/client.ts` renders stipend feedback and member chips; `src/smoke/smoke.ts` owns the Iteration 4 proof.
-- Verification: `npm.cmd run smoke` passes, including nested strict build, 30-hour/750-coin one-time stipend, public rookie flag and reset, ten qualifying wins, exact 11th-bid rejection, above-ceiling acceptance, `[slip]` logs, and schema-v2 round-trip of all new player fields.
-- Design decisions: existing schema-v1/v2 players missing Iteration 4 fields normalize as already-stipended/non-rookie/no claims to prevent migration grants; tier bases are 40/120/400/1500 and `SLIP_PRICE_CEILING` is a multiplier; currently led qualifying auctions reserve claim capacity so parallel auctions cannot bypass the win cap; established players receive the normal 500 during hard reset and are marked already-stipended for the new season.
-- Risks/unverified: browser interaction and responsive/device visual QA were not run; environment values are bounded but malformed numeric strings follow the project's existing numeric-env behavior.
-- Next safest task: manual desktop and narrow-mobile pass for the stipend toast and crowded house-member rookie chips.
+- Goal: Run B client overhaul to the noir-gold UI contract in `docs/UI_STRUCTURE_SPEC.md`.
+- Phase/status: production implementation complete; strict build, asset verification, and automated smoke pass. Manual browser/device art-direction sweep remains.
+- Latest work: replaced the client shell, presentation layer, and rendering code with Auth, Character Select, House Browser, Auction Hall, modal/overlay, motion, and narrow-mobile surfaces; added static-bundle and public-auction-frame privacy smoke assertions.
+- Owners: `src/client/index.html` owns screen/modal structure; `src/client/styles.css` owns exact palette, responsive layout, tier treatment, and motion; `src/client/client.ts` maps the unchanged protocol into UI and keeps authenticity rendering private; `src/smoke/smoke.ts` owns the new bundle/privacy regression checks.
+- Privacy: owner fake ribbons read only `PrivateState.items[].fake`; appraisal seals read only `PrivateState.peeked`; `PublicAuction` rendering never derives authenticity or seller identity.
+- Verification: `npm.cmd run build` passes; `npm.cmd run verify-assets` reports expected 71, missing/unexpected/failed all empty, manifestMatches true; `npm.cmd run smoke` passes with `UI BUNDLE PASS` and `WS PRIVACY PASS` lines plus all prior gameplay assertions.
+- Intentional protocol-bound limitations: box price is presented as 100 coins based on current server behavior rather than a public config field; ability target validity and order fulfillment remain server-authoritative because no explicit valid-target/match payload exists; season end provides current private fame/milestone totals because the event has no final-results payload.
+- Runtime QA: local server launched successfully, but no browser surface was exposed by the computer-use runtime, so 1440x900 and 390x844 visual/touch checks were not captured. Verify carousel centering, dense live-lot wrapping, modal target flows, reveal timing, and bottom safe-area/tab usability manually.
+- Next safest task: Run C screenshot sweep at 1440x900 and 390x844, then fix visual issues without changing protocol.
