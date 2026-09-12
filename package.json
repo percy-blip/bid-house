@@ -7,7 +7,8 @@
     "build": "tsc && node scripts/copy-static.mjs",
     "start": "node dist/server/server.js",
     "dev": "npm run build && concurrently \"tsc --watch\" \"node --watch dist/server/server.js\"",
-    "smoke": "npm run build && node dist/smoke/smoke.js"
+    "smoke": "npm run build && node dist/smoke/smoke.js",
+    "verify-assets": "node scripts/verify-assets.mjs"
   },
   "engines": { "node": ">=20" },
   "dependencies": { "ws": "^8.18.0" },

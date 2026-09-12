@@ -1,0 +1,28 @@
+Completed the full asset run without touching game, server, or style code.
+
+- Track 1: 45 standalone SVG assets
+- Track 2: 26 image-generated PNGs
+  - 20 item illustrations
+  - 6 character portraits
+- Manifest: 71/71 entries pass
+- Alpha coverage range: 18.03%–60.86%
+- Maximum magenta residual: 0
+- Minimum color spread: 255
+
+Two portraits—Brick and Nia—required two retry rounds because their backgrounds rendered black. Targeted background edits produced valid chroma-keyed results. No placeholders or missing assets remain.
+
+Added:
+
+- [client-assets](/C:/Users/Crimson/Projects/bid-house/client-assets)
+- [manifest.json](/C:/Users/Crimson/Projects/bid-house/client-assets/manifest.json)
+- [verify-assets.mjs](/C:/Users/Crimson/Projects/bid-house/scripts/verify-assets.mjs)
+- [generate-svg-assets.mjs](/C:/Users/Crimson/Projects/bid-house/scripts/generate-svg-assets.mjs)
+- `npm run verify-assets`
+
+Validation passed:
+
+- `npm run verify-assets`
+- `npm run build`
+- `npm run smoke`
+
+No git commit was created. The pre-existing untracked `.hermes/codex-assets-brief.md` was left untouched.

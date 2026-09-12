@@ -1,0 +1,641 @@
+[
+  {
+    "file": "icons/logo.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/coin.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/fame.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/xp.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/box-basic.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/box-fine.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/order.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/gavel.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/featured.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/peek.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/shield.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/refund.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/tax.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/block.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/appraise.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/coin-ability.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/cooldown.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/skull.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/heat-1.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/heat-2.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/heat-3.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/heat-4.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/heat-5.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/timer.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/bid.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "icons/list.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/sigil-base.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-gavel.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-gem.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-coin.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-star.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-mask.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-key.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-flame.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-book.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-crown.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-anchor.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-moon.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "sigils/glyph-comet.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "frames/t1.svg",
+    "track": "svg",
+    "dims": "96x120",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "frames/t2.svg",
+    "track": "svg",
+    "dims": "96x120",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "frames/t3.svg",
+    "track": "svg",
+    "dims": "96x120",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "frames/t4.svg",
+    "track": "svg",
+    "dims": "96x120",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "frames/ribbon-fake-owner.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "frames/seal-appraised.svg",
+    "track": "svg",
+    "dims": "24x24",
+    "alphaCoverage": 0,
+    "magentaResidual": 0,
+    "colorSpread": 0,
+    "ok": true
+  },
+  {
+    "file": "items/art-art-1.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.458023,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-art-2.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.47345,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-art-3.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.552231,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-art-4.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.608551,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-relic-1.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.470779,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-relic-2.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.445038,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-relic-3.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.411789,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-relic-4.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.35379,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-tech-1.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.374664,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-tech-2.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.547592,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-tech-3.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.528519,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-tech-4.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.44516,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-fashion-1.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.517151,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-fashion-2.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.462509,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-fashion-3.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.489105,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-fashion-4.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.490082,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-oddity-1.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.403259,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-oddity-2.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.370926,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-oddity-3.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.410614,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "items/art-oddity-4.png",
+    "track": "imagegen",
+    "dims": "256x256",
+    "alphaCoverage": 0.37915,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "characters/mara.png",
+    "track": "imagegen",
+    "dims": "512x512",
+    "alphaCoverage": 0.460403,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "characters/brick.png",
+    "track": "imagegen",
+    "dims": "512x512",
+    "alphaCoverage": 0.1833,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "characters/june.png",
+    "track": "imagegen",
+    "dims": "512x512",
+    "alphaCoverage": 0.550938,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "characters/rex.png",
+    "track": "imagegen",
+    "dims": "512x512",
+    "alphaCoverage": 0.549557,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "characters/nia.png",
+    "track": "imagegen",
+    "dims": "512x512",
+    "alphaCoverage": 0.180252,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  },
+  {
+    "file": "characters/sol.png",
+    "track": "imagegen",
+    "dims": "512x512",
+    "alphaCoverage": 0.585186,
+    "magentaResidual": 0,
+    "colorSpread": 255,
+    "ok": true
+  }
+]
