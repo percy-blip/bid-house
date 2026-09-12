@@ -1,0 +1,50 @@
+Implemented Run S server foundation. Both required gates pass.
+
+Changed:
+
+- [types.ts](C:/Users/Crimson/Projects/bid-house/src/shared/types.ts)
+- [game.ts](C:/Users/Crimson/Projects/bid-house/src/server/game.ts)
+- [server.ts](C:/Users/Crimson/Projects/bid-house/src/server/server.ts)
+- [smoke.ts](C:/Users/Crimson/Projects/bid-house/src/smoke/smoke.ts)
+- [CODEX_HANDOFF.md](C:/Users/Crimson/Projects/bid-house/CODEX_HANDOFF.md)
+
+Contract additions:
+
+- `PULL_BIDDER`, `RECALL`
+- `CONFIG`
+- `MEMBER_ORDERS`
+- `MARKET_SUMMARY`
+- Paginated `MARKET_HISTORY`
+- Optional explicit `houseId` on legacy house-scoped mutations
+- Schema v3 market ledger, settlement dedupe, roster, idle penalty, and bidder-XP persistence
+- Deployment projections with `level`, `xpPaused`, and `cooldownMultiplier`
+
+Intentional behavior changes:
+
+- Characters must be owned before deployment; the first choice is free and pulls cost 150 coins.
+- Recall genuinely removes a deployment, including the final deployment.
+- Recall/redeploy imposes a 24-hour ability, XP, and movement lock.
+- Gameplay XP now belongs to the acting bidder; legacy account XP is retained only for migration.
+- Featured-auction XP follows the winning house deployment.
+- Ability cooldowns scale by bidder level.
+- Empty-box opening buys a box for the configured price, default 100.
+- Auction public items use an explicit safe allowlist.
+- Global player projection is now only `{id, name, fame}`.
+- Settlement notes are limited to current house members and participants.
+- Market records contain paid settlements only and clear at season reset.
+- Save-loading failures no longer silently create fresh state; only a missing save starts fresh.
+- Account mutations refresh every connected session.
+
+Verification tail:
+
+```text
+UI BUNDLE PASS: static shell served.
+MODEL PASS: roster/pulls/ownership, recall and move lock, per-bidder XP/levels, ledger aggregate/pagination/dedupe/reset, member-order geography, privacy projections, and migrations.
+WS PASS: sale notes scoped to house/participants, public DTO sanitized, and all account sessions refreshed.
+SMOKE PASS: all legacy-compatible and five-tab server foundation assertions passed.
+```
+
+`npm.cmd run build`: passed  
+`npm.cmd run smoke`: passed
+
+`CODEX_HANDOFF.md` was updated. `DEBUG_HANDOFF.md` was not created because no repeated unresolved defect remains. The pre-existing untracked `.hermes/codex-run-s-brief.md` was left untouched.

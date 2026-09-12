@@ -1,11 +1,11 @@
 # Bid House handoff
 
-- Goal: Run B client overhaul to the noir-gold UI contract in `docs/UI_STRUCTURE_SPEC.md`.
-- Phase/status: production implementation complete; strict build, asset verification, and automated smoke pass. Manual browser/device art-direction sweep remains.
-- Latest work: replaced the client shell, presentation layer, and rendering code with Auth, Character Select, House Browser, Auction Hall, modal/overlay, motion, and narrow-mobile surfaces; added static-bundle and public-auction-frame privacy smoke assertions.
-- Owners: `src/client/index.html` owns screen/modal structure; `src/client/styles.css` owns exact palette, responsive layout, tier treatment, and motion; `src/client/client.ts` maps the unchanged protocol into UI and keeps authenticity rendering private; `src/smoke/smoke.ts` owns the new bundle/privacy regression checks.
-- Privacy: owner fake ribbons read only `PrivateState.items[].fake`; appraisal seals read only `PrivateState.peeked`; `PublicAuction` rendering never derives authenticity or seller identity.
-- Verification: `npm.cmd run build` passes; `npm.cmd run verify-assets` reports expected 71, missing/unexpected/failed all empty, manifestMatches true; `npm.cmd run smoke` passes with `UI BUNDLE PASS` and `WS PRIVACY PASS` lines plus all prior gameplay assertions.
-- Intentional protocol-bound limitations: box price is presented as 100 coins based on current server behavior rather than a public config field; ability target validity and order fulfillment remain server-authoritative because no explicit valid-target/match payload exists; season end provides current private fame/milestone totals because the event has no final-results payload.
-- Runtime QA: local server launched successfully, but no browser surface was exposed by the computer-use runtime, so 1440x900 and 390x844 visual/touch checks were not captured. Verify carousel centering, dense live-lot wrapping, modal target flows, reveal timing, and bottom safe-area/tab usability manually.
-- Next safest task: Run C screenshot sweep at 1440x900 and 390x844, then fix visual issues without changing protocol.
+- Goal: Run S server foundation for the locked five-tab model in `docs/TAB_DESIGN.md`.
+- Phase/status: production server slice complete; strict build and model/WebSocket smoke pass.
+- Latest work: added schema v3 with loud v1/v2 migration, owned bidder rosters and paid pulls, true recall/move lock, seasonal per-bidder XP/levels, configurable box auto-buy, season market ledger/read models, member-order aggregation, privacy projections, scoped settlement notes, and all-session account refresh.
+- Owners: `src/shared/types.ts` owns protocol/persistence DTOs; `src/server/game.ts` owns authoritative rules and projections; `src/server/server.ts` owns socket scoping and refresh; `src/smoke/smoke.ts` owns contract coverage.
+- Compatibility: legacy session-house commands remain valid; mutations additionally accept explicit `houseId`. Legacy account `xp` remains persisted but receives no gameplay XP. Global players now intentionally expose only id/name/fame.
+- Verification: `npm.cmd run build` passes; `npm.cmd run smoke` passes with UI BUNDLE, MODEL, WS, and final SMOKE PASS lines.
+- Privacy: public auction items use an explicit id/name/category/tier/tags/art allowlist; member orders include only deployed houses; settlement notes route only to current house members and participants; hidden-target failures use a non-oracular message.
+- Persistence: rosters survive season reset; per-bidder XP and the anonymous ledger reset each season; recalled bidder XP survives idle/redeploy within the season; settlement IDs dedupe ledger writes.
+- Next safest task: implement the five-tab client against the additive CONFIG, MEMBER_ORDERS, MARKET_SUMMARY, MARKET_HISTORY, PULL_BIDDER, and RECALL contracts.
