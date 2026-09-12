@@ -1,0 +1,43 @@
+Implemented Iteration 2 end-to-end without committing.
+
+Changed:
+
+- `src/server/game.ts`
+- `src/server/server.ts`
+- `src/shared/types.ts`
+- `src/client/client.ts`
+- `src/client/index.html`
+- `src/client/styles.css`
+- `src/smoke/smoke.ts`
+- `README.md`
+- `CODEX_HANDOFF.md`
+
+Delivered accounts with scrypt hashing and sliding tokens, AUTH-first WebSockets, atomic debounced persistence, runnable seasons and admin force-end, season UI countdown, privacy checks, and restart coverage.
+
+Deviations:
+
+- None from the functional brief.
+- Browser visual QA was unavailable because no browser surface could be created. Strict client compilation passed; manual desktop/mobile visual inspection remains recommended.
+- The existing untracked `.hermes/codex-iter2-brief.md` was untouched.
+- No git commit was created.
+
+Exact smoke output:
+
+```text
+> bid-house@1.0.0 smoke
+> npm run build && node dist/smoke/smoke.js
+
+
+> bid-house@1.0.0 build
+> tsc && node scripts/copy-static.mjs
+
+SMOKE PASS: registered 2 users; wrong password rejected; AUTH+JOIN succeeded; 2 boxes opened; debounced state.json created; fresh GameState reload preserved both users’ items and coins; public season countdown and auction privacy verified; admin end-season settled live lots, emitted SEASON_END, incremented season, and reset coins/xp/fame/inventory/boxes; 0 protocol errors.
+```
+
+Handoff status:
+
+- `CODEX_HANDOFF.md` updated.
+- `DEBUG_HANDOFF.md` not created because no repeated unresolved defect occurred.
+- Build: pass.
+- Smoke: pass.
+- Remaining risk: manual responsive browser QA only.

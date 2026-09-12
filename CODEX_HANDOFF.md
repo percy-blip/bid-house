@@ -1,8 +1,9 @@
 # Bid House handoff
 
-- Goal: deliver the requested dependency-light multiplayer auction-house MVP.
-- Phase/status: vertical slice complete; build and automated runtime verification pass.
-- Owners: `src/server/game.ts` owns authoritative rules/state, `src/server/server.ts` owns transport/static hosting, `src/client/client.ts` owns presentation, `src/smoke/smoke.ts` owns the end-to-end proof.
-- Verification: `npm install` (0 vulnerabilities), `npm run build` (pass), `npm run smoke` (pass: join/open/list/bid/ability/settle/receive/conditional fulfill/privacy).
-- Risks: in-memory reconnect works only during one server process; random order supply can mean a smoke run legitimately skips fulfillment when no live order matches the acquired item. Browser UI visual inspection was unavailable because no browser surface was connected; responsive CSS and runtime static delivery were checked from source/server instead.
-- Next safest task: manual multiplayer browser playtest at desktop and narrow mobile widths.
+- Goal: Iteration 2 accounts, runnable seasons, and file-backed persistence.
+- Phase/status: production iteration implemented; strict build and automated end-to-end smoke pass.
+- Latest work: added scrypt-backed register/login and sliding tokens; AUTH-first WebSocket sessions; versioned atomic snapshots; five-minute season warning, settlement/reset, and admin force-end; account/character UI and season countdown; restart-aware smoke coverage and operational documentation.
+- Owners: `src/server/game.ts` owns authoritative rules, accounts, season, and snapshot schema; `src/server/server.ts` owns HTTP/WS transport and debounced disk writes; `src/client/client.ts` owns account/character/game presentation; `src/smoke/smoke.ts` owns end-to-end proof.
+- Verification: `npm.cmd run smoke` passes, including its nested strict TypeScript build, two registrations, wrong-password rejection, AUTH+JOIN, two box opens, on-disk save, fresh GameState reload, public privacy/countdown, and admin season reset.
+- Risks/unverified: no browser surface was available for visual or responsive interaction inspection. Snapshot schema version 1 intentionally has no older production migration because the prior MVP had no durable save format. Railway requires a mounted volume at `DATA_DIR`.
+- Next safest task: manual desktop and narrow-mobile browser pass of login/register toggle, character selection, reconnect, and season header.
