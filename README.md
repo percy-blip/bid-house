@@ -1,10 +1,8 @@
 # Bid House
 
-Bid House is a server-authoritative multiplayer auction game MVP. Create an account, choose a bidder, open mystery boxes, list finds anonymously, compete in timed English auctions, and fulfill public collector orders during time-limited seasons.
+Bid House is a server-authoritative multiplayer auction game built with Node 20, strict TypeScript, and plain WebSockets. Accounts share one wallet and collection across a dynamic world of independent bid houses.
 
 ## Run
-
-Requires Node.js 20 or newer.
 
 ```bash
 npm install
@@ -12,56 +10,61 @@ npm run build
 npm start
 ```
 
-Open `http://localhost:3000`. `npm run dev` runs TypeScript in watch mode beside the Node watcher. `npm run smoke` builds, starts an isolated server, and verifies accounts, WebSocket authentication, persistence/reload, privacy, season state, and an administrator-triggered season reset.
+Open `http://localhost:3000`. `npm run smoke` builds and verifies the multi-house lifecycle, deployment/cooldown rules, featured rewards, specialty orders, season reset, persistence, and privacy.
 
 ## Configuration
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `PORT` | `3000` | HTTP and WebSocket port |
-| `DATA_DIR` | `./data` | Directory containing the durable `state.json` snapshot |
-| `SEASON_LENGTH_HOURS` | `672` | Season duration in hours (four weeks by default) |
-| `ADMIN_TOKEN` | unset | Bearer token required by the force-end endpoint; the endpoint returns 403 when unset |
+| `DATA_DIR` | `./data` | Directory containing durable `state.json` |
+| `SEASON_LENGTH_HOURS` | `672` | Global season duration |
+| `ADMIN_TOKEN` | unset | Bearer token for `POST /admin/end-season` |
+| `HOUSE_CAP` | `8` | Unique deployed players at which a listing can spawn another house |
+| `MAX_DEPLOYS` | `3` | Maximum simultaneous character deployments per player |
+| `FEATURED_INTERVAL_MINUTES` | `30` | Per-house featured-auction interval |
 
-State changes are saved after an approximately two-second debounce and again during graceful `SIGINT`/`SIGTERM` shutdown. Writes use a temporary file followed by rename. The snapshot includes account password hashes/salts, server-side auth tokens, players, private item authenticity, auctions, orders, cooldowns, and season boundaries; do not publish it.
+Snapshots are debounced by about two seconds and atomically replaced. Schema version 2 persists accounts, tokens, global players/items, houses and their deployments/markets, private peeks, and the global season. Mount a persistent volume for `DATA_DIR` on ephemeral hosts such as Railway.
 
-Railway's ordinary filesystem is ephemeral. Mount a persistent volume and set `DATA_DIR` to its mount path or progress will be lost when the deployment is replaced.
+## House rules
+
+- Grand Exchange always exists. A listing received by a capped house spawns a generated house when no spare-capacity house exists.
+- House name, specialty, fee rate (3%-12%), and UTC prime hour are immutable. A house has its own auctions, six orders, deployments, and featured schedule.
+- Coins, inventory, XP, and fame belong to the global player. Listings, bids, orders, and ability targets belong to the active house.
+- A player may deploy distinct characters up to `MAX_DEPLOYS`. Redeploying moves a character and disables that character's abilities and XP earnings for 24 hours. Entering an already-deployed house is instant.
+- A house listing charges its fee and its completed sale pays the seller net of that same rate.
+- Each specialty house keeps at least three of its six generated orders tagged for its specialty.
+- Featured selection prefers item tier, then listing fee paid, then earliest ending listing. A featured win grants bonus fame equal to 25% of the winning bid and the flag disappears with settlement.
+- A season end settles listings, resets global progression/inventory, clears house auctions/orders, regenerates six orders per house, preserves deployments/houses, and clears redeploy cooldowns.
+
+Seller identity and authenticity remain absent from live public auction projections. Coins and inventory remain owner-only.
 
 ## HTTP API
 
-All responses are JSON. Usernames are case-insensitively unique, 3–20 characters, and may contain letters, numbers, and underscores. Passwords are 8–128 characters and are stored as scrypt hashes with per-user salts.
+- `POST /api/register`: `{"username":"Ada_1","password":"correct horse"}`
+- `POST /api/login`: the same shape
+- `POST /admin/end-season`: requires `Authorization: Bearer <ADMIN_TOKEN>`
 
-- `POST /api/register` with `{"username":"Ada_1","password":"correct horse"}` returns `{"token":"…","playerId":"…"}`.
-- `POST /api/login` with the same fields returns a fresh token and player ID.
-- `POST /admin/end-season` with `Authorization: Bearer <ADMIN_TOKEN>` immediately settles live auctions and performs the normal season reset.
-
-Authentication tokens are random 32-byte hex values. They expire after 30 days and slide forward whenever successfully used.
-
-## Rules and seasons
-
-- Each player begins each season with 500 coins and two free boxes; later boxes cost 100 coins.
-- Boxes roll tiers 1–4 from common to rare. Fake chances are 10%, 25%, 50%, and 70% respectively. Only an item's owner (or a successful peek) sees authenticity.
-- Listings run for the chosen duration. Bids rise by at least 10 coins or 5%, whichever is greater. A bid in the last five seconds resets the clock to five seconds.
-- The winner pays the bid, receives the item and its authenticity, and the seller receives 95%. Item provenance is public.
-- Orders atomically consume matching inventory and grant coins, XP, and fame. Fame milestones at 500, 1500, and 4000 add coin bonuses.
-- Each of six characters equips one main ability and two traits. Cooldowns and limited uses are server-owned.
-- Five minutes before a season ends, its phase changes to `ending` and clients receive a warning. At the boundary, all auctions settle before coins, XP, fame, inventory, boxes, orders, and cooldowns reset; the next season then begins.
-- Every 15 minutes the highest-tier live lot is marked featured.
+Usernames are case-insensitively unique, 3-20 ASCII letters/numbers/underscores. Passwords are 8-128 characters and stored as scrypt hashes with per-account salts.
 
 ## WebSocket protocol
 
-Connect to the same host and send `{"type":"AUTH","token":"…"}` first. The server responds with `AUTH_OK`. A new account then sends `{"type":"JOIN","characterId":"mara"}`; returning accounts receive `WELCOME` immediately after `AUTH`.
+Send `AUTH` first. The server replies with `AUTH_OK` and `HOUSE_LIST`. A new account has no player/deployment yet: send `DEPLOY`, then `JOIN` remains accepted for compatibility. Attempting `JOIN` without a deployment returns an `ERROR` directing the client to deploy first.
 
-Authenticated game intents are `JOIN`, `OPEN_BOX`, `LIST_ITEM`, `BID`, `FULFILL_ORDER`, `USE_ABILITY`, and `PING`. The server replies with `AUTH_OK`, `WELCOME`, throttled `STATE` broadcasts, owner-only `PRIVATE` updates, `ANNOUNCEMENT`, `SEASON_END`, `ERROR`, and `PONG`.
-
-`STATE.publicState.season` contains the public season number, start/end timestamps, and phase. Active public auction records contain a public item projection and never contain `fake` or `sellerId`.
-
-Representative payloads:
+Client messages:
 
 ```json
-{"type":"AUTH","token":"0123456789abcdef…"}
-{"type":"JOIN","characterId":"mara"}
-{"type":"LIST_ITEM","itemId":"…","durationSec":30}
-{"type":"BID","auctionId":"…","amount":50}
-{"type":"USE_ABILITY","abilityId":"peek","auctionId":"…"}
+{"type":"AUTH","token":"..."}
+{"type":"DEPLOY","houseId":"house-1","characterId":"mara"}
+{"type":"REDEPLOY","characterId":"mara","toHouseId":"house-2"}
+{"type":"ENTER_HOUSE","houseId":"house-2"}
+{"type":"HOUSE_LIST"}
+{"type":"LIST_ITEM","itemId":"...","durationSec":30}
+{"type":"BID","auctionId":"...","amount":50}
+{"type":"FULFILL_ORDER","orderId":"...","itemIds":["..."]}
+{"type":"USE_ABILITY","abilityId":"peek","auctionId":"..."}
 ```
+
+Existing `OPEN_BOX`, `JOIN`, and `PING` messages remain supported. Game actions implicitly use the socket's active house.
+
+Server messages include `AUTH_OK`, `WELCOME`, `HOUSE_LIST`, `STATE`, `PRIVATE`, `FEATURED`, `ANNOUNCEMENT`, `SEASON_END`, `ERROR`, and `PONG`. `STATE.publicState.houses` contains summaries for every house; `currentHouse` contains auctions, orders, and public deployments only for the active house.

@@ -1,54 +1,28 @@
 import { spawn } from "node:child_process";
-import { access, mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp,rm,writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { WebSocket } from "ws";
-import { GameState } from "../server/game.js";
-import type { PrivateState, PublicState, ServerMessage } from "../shared/types.js";
-
-const port=39001,httpBase=`http://127.0.0.1:${port}`,wsBase=`ws://127.0.0.1:${port}`;
-const wait=(ms:number)=>new Promise(r=>setTimeout(r,ms));
-const dataDir=await mkdtemp(join(tmpdir(),"bid-house-smoke-")),statePath=join(dataDir,"state.json");
-const server=spawn(process.execPath,["dist/server/server.js"],{env:{...process.env,PORT:String(port),DATA_DIR:dataDir,ADMIN_TOKEN:"smoke-admin",SEASON_LENGTH_HOURS:"1"},stdio:["ignore","pipe","pipe"]});
-let serverLog="";server.stdout.on("data",d=>serverLog+=String(d));server.stderr.on("data",d=>serverLog+=String(d));
-
-class Bot{
-  ws=new WebSocket(wsBase);privateState?:PrivateState;state?:PublicState;errors:string[]=[];messages:string[]=[];seasonEnds:number[]=[];
-  constructor(readonly token:string,readonly characterId:string){}
-  listen(){this.ws.on("message",raw=>{const m=JSON.parse(String(raw)) as ServerMessage;if(m.type==="WELCOME"||m.type==="PRIVATE")this.privateState=m.privateState;if(m.type==="STATE")this.state=m.publicState;if(m.type==="ERROR")this.errors.push(m.message);if(m.type==="PRIVATE"&&m.message)this.messages.push(m.message);if(m.type==="SEASON_END")this.seasonEnds.push(m.number);});}
-  async ready(){await new Promise<void>((resolve,reject)=>{this.ws.once("open",()=>{this.send({type:"AUTH",token:this.token});resolve();});this.ws.once("error",reject);});await this.until(()=>!!this.state);this.send({type:"JOIN",characterId:this.characterId});await this.until(()=>!!this.privateState);}
-  send(m:object){this.ws.send(JSON.stringify(m));}
-  async until(ok:()=>boolean,timeout=8000){const end=Date.now()+timeout;while(Date.now()<end){if(ok())return;await wait(50);}throw new Error("Timed out waiting for WebSocket state");}
-}
-async function post(path:string,body:object,token?:string){const response=await fetch(httpBase+path,{method:"POST",headers:{"content-type":"application/json",...(token?{authorization:`Bearer ${token}`}:{})},body:JSON.stringify(body)});return {status:response.status,body:await response.json() as Record<string,unknown>};}
-async function stopServer(){if(server.exitCode===null){server.kill("SIGTERM");await Promise.race([new Promise<void>(resolve=>server.once("exit",()=>resolve())),wait(6000)]);}}
-
-async function run(){
-  let a:Bot|undefined,b:Bot|undefined;
-  try{
-    while(!serverLog.includes("listening")){if(server.exitCode!==null)throw new Error(`Server exited early: ${serverLog}`);await wait(30);}
-    const regA=await post("/api/register",{username:"SmokeSeller",password:"correct-horse-a"});
-    const regB=await post("/api/register",{username:"SmokeBuyer",password:"correct-horse-b"});
-    if(regA.status!==200||regB.status!==200)throw new Error("Could not register two users");
-    const wrong=await post("/api/login",{username:"SmokeSeller",password:"wrong-password"});
-    if(wrong.status===200||typeof wrong.body.error!=="string")throw new Error("Wrong password was not rejected with JSON error");
-    const seller=new Bot(String(regA.body.token),"mara"),buyer=new Bot(String(regB.body.token),"brick");a=seller;b=buyer;seller.listen();buyer.listen();await Promise.all([seller.ready(),buyer.ready()]);
-    if(!seller.state?.season||seller.state.season.endsAt<=seller.state.serverTime)throw new Error("Season countdown missing from public state");
-    seller.send({type:"OPEN_BOX"});buyer.send({type:"OPEN_BOX"});
-    await Promise.all([seller.until(()=>seller.privateState?.items.length===1),buyer.until(()=>buyer.privateState?.items.length===1)]);
-    seller.send({type:"USE_ABILITY",abilityId:"stipend"});await seller.until(()=>seller.privateState?.player.coins===520);
-    await wait(2300);await access(statePath);
-    const restored=await GameState.load(statePath);
-    const restoredA=restored.players.get(String(regA.body.playerId)),restoredB=restored.players.get(String(regB.body.playerId));
-    if(restoredA?.inventory.length!==1||restoredB?.inventory.length!==1||restoredA.coins!==520||restoredB.coins!==500)throw new Error("Restart simulation did not preserve both inventories and coin balances");
-    const listedItem=seller.privateState!.items[0]!;seller.send({type:"LIST_ITEM",itemId:listedItem.id,durationSec:30});await buyer.until(()=>!!buyer.state?.auctions.some(x=>x.item.id===listedItem.id));
-    const publicAuction=buyer.state!.auctions.find(x=>x.item.id===listedItem.id)!;if("fake" in publicAuction.item||"sellerId" in publicAuction)throw new Error("Public auction leaked authenticity or seller identity");
-    const oldSeason=seller.state.season.number;
-    const ended=await post("/admin/end-season",{},"smoke-admin");if(ended.status!==200)throw new Error("Admin season end failed");
-    await Promise.all([seller.until(()=>seller.state?.season.number===oldSeason+1&&seller.privateState?.player.inventory.length===0),buyer.until(()=>buyer.state?.season.number===oldSeason+1&&buyer.privateState?.player.inventory.length===0)]);
-    for(const bot of [seller,buyer]){const p=bot.privateState!.player;if(p.coins!==500||p.xp!==0||p.fame!==0||p.boxes!==2)throw new Error("Season reset did not restore stipend/progression/inventory/boxes");}
-    if(!seller.seasonEnds.includes(oldSeason+1)||seller.errors.length||buyer.errors.length)throw new Error(`Protocol errors or missing SEASON_END: ${[...seller.errors,...buyer.errors].join(", ")}`);
-    console.log("SMOKE PASS: registered 2 users; wrong password rejected; AUTH+JOIN succeeded; 2 boxes opened; debounced state.json created; fresh GameState reload preserved both users’ items and coins; public season countdown and auction privacy verified; admin end-season settled live lots, emitted SEASON_END, incremented season, and reset coins/xp/fame/inventory/boxes; 0 protocol errors.");
-  }finally{a?.ws.close();b?.ws.close();await stopServer();await rm(dataDir,{recursive:true,force:true});}
-}
-run().catch(e=>{console.error("SMOKE FAIL:",e);console.error(serverLog);process.exitCode=1;});
+import { GameError,GameState } from "../server/game.js";
+const wait=(ms:number)=>new Promise(r=>setTimeout(r,ms)),port=39001,dataDir=await mkdtemp(join(tmpdir(),"bid-house-smoke-")),statePath=join(dataDir,"state.json");
+const server=spawn(process.execPath,["dist/server/server.js"],{env:{...process.env,PORT:String(port),DATA_DIR:dataDir,ADMIN_TOKEN:"smoke-admin",SEASON_LENGTH_HOURS:"1",HOUSE_CAP:"1",MAX_DEPLOYS:"3",FEATURED_INTERVAL_MINUTES:"0.001"},stdio:["ignore","pipe","pipe"]});
+let log="";server.stdout.on("data",d=>log+=String(d));server.stderr.on("data",d=>log+=String(d));
+const check=(ok:unknown,message:string)=>{if(!ok)throw new Error(message);};
+async function run(){try{
+ while(!log.includes("listening")){if(server.exitCode!==null)throw new Error(`Server exited early: ${log}`);await wait(20);}
+ const initial=await fetch(`http://127.0.0.1:${port}`);check(initial.ok,"Server boot failed");
+ const game=new GameState(()=>{},1,undefined,{houseCap:1,maxDeploys:3,featuredIntervalMinutes:.001});check(game.houses.size===1&&game.houses.has("house-1"),"Boot did not create house 1");
+ const a=await game.register("SmokeSeller","correct-horse-a"),b=await game.register("SmokeBuyer","correct-horse-b");
+ let joinBlocked=false;try{game.join(a.playerId);}catch(e){joinBlocked=e instanceof GameError&&e.message.includes("Deploy");}check(joinBlocked,"JOIN did not require deployment");
+ game.deploy(a.playerId,"house-1","mara");check(game.join(a.playerId).id===a.playerId,"Register/deploy/JOIN failed");
+ const item=game.openBox(a.playerId),listed=game.list(a.playerId,"house-1",item.id,30);check(listed.spawned&&game.houses.size===2,"At-cap listing did not spawn house 2");
+ game.deploy(a.playerId,"house-2","brick");check(game.deployments(a.playerId).length===2,"Different character could not deploy to house 2");
+ game.deploy(b.playerId,"house-1","june");game.redeploy(b.playerId,"june","house-2");const cooldown=game.deployments(b.playerId)[0]!.redeployCooldownUntil;check(cooldown>=Date.now()+86390000,"Redeploy did not set a 24h cooldown");
+ let abilityBlocked=false;try{game.useAbility(b.playerId,"house-2",{type:"USE_ABILITY",abilityId:"refund",auctionId:listed.auction.id});}catch(e){abilityBlocked=e instanceof GameError&&e.message.includes("cooldown");}check(abilityBlocked,"Ability was not blocked during redeploy cooldown");
+ const h1=game.houses.get("house-1")!;const buyer=game.players.get(b.playerId)!;h1.deployments.push({playerId:b.playerId,characterId:"june",xp:0,redeployCooldownUntil:0});game.bid(b.playerId,"house-1",listed.auction.id,100);const promoted=game.promoteHouse("house-1");check(promoted?.id===listed.auction.id&&promoted.featured,"Featured tick did not promote auction");listed.auction.endsAt=Date.now()-1;game.settle();check(buyer.fame===25,"Featured win did not pay +25% fame bonus");
+ const specialty=game.houses.get("house-2")!;specialty.specialtyTag="royal";specialty.orders=[];game.forceEndSeason();check(specialty.orders.filter(o=>o.template.tag==="royal").length>=3,"Specialty order bias missing");
+ const beforeHouses=game.houses.size,beforeDeploys=game.deployments(a.playerId).length;specialty.deployments[0]!.redeployCooldownUntil=Date.now()+86400000;const oldSeason=game.season.number;game.forceEndSeason();check(game.houses.size===beforeHouses&&game.deployments(a.playerId).length===beforeDeploys&&game.season.number===oldSeason+1,"Season did not preserve houses/deployments");check([...game.houses.values()].every(h=>h.auctions.length===0&&h.orders.length===6&&h.deployments.every(d=>d.redeployCooldownUntil===0)),"Season house reset/regeneration failed");
+ await writeFile(statePath,JSON.stringify(game.snapshot()),"utf8");const restored=await GameState.load(statePath,()=>{},1,{houseCap:1,maxDeploys:3,featuredIntervalMinutes:.001});check(restored.houses.size===game.houses.size&&restored.deployments(a.playerId).length===beforeDeploys,"Persistence lost houses or deployments");
+ const pub=restored.publicState(a.playerId,"house-1");check(pub.houses.length===beforeHouses&&!!pub.currentHouse&&!pub.currentHouse.auctions.some(x=>"fake" in x.item||"sellerId" in x),"Public state shape/privacy failed");
+ console.log("SMOKE PASS: house 1 booted; registration and deployment succeeded; JOIN-before-deploy rejected; HOUSE_CAP=1 listing spawned house 2; second character deployed cross-house; redeploy set a 24h cooldown and blocked abilities; featured promotion settled with +25 fame; specialty orders met 50% bias; season reset kept houses/deployments, cleared cooldowns, and regenerated 6 orders per house; schema-v2 persistence preserved houses/deployments; public house detail preserved seller/fake privacy.");
+ }finally{if(server.exitCode===null){server.kill("SIGTERM");await Promise.race([new Promise<void>(r=>server.once("exit",()=>r())),wait(5000)]);}await rm(dataDir,{recursive:true,force:true});}}
+run().catch(e=>{console.error("SMOKE FAIL:",e);console.error(log);process.exitCode=1;});

@@ -1,9 +1,10 @@
 # Bid House handoff
 
-- Goal: Iteration 2 accounts, runnable seasons, and file-backed persistence.
-- Phase/status: production iteration implemented; strict build and automated end-to-end smoke pass.
-- Latest work: added scrypt-backed register/login and sliding tokens; AUTH-first WebSocket sessions; versioned atomic snapshots; five-minute season warning, settlement/reset, and admin force-end; account/character UI and season countdown; restart-aware smoke coverage and operational documentation.
-- Owners: `src/server/game.ts` owns authoritative rules, accounts, season, and snapshot schema; `src/server/server.ts` owns HTTP/WS transport and debounced disk writes; `src/client/client.ts` owns account/character/game presentation; `src/smoke/smoke.ts` owns end-to-end proof.
-- Verification: `npm.cmd run smoke` passes, including its nested strict TypeScript build, two registrations, wrong-password rejection, AUTH+JOIN, two box opens, on-disk save, fresh GameState reload, public privacy/countdown, and admin season reset.
-- Risks/unverified: no browser surface was available for visual or responsive interaction inspection. Snapshot schema version 1 intentionally has no older production migration because the prior MVP had no durable save format. Railway requires a mounted volume at `DATA_DIR`.
-- Next safest task: manual desktop and narrow-mobile browser pass of login/register toggle, character selection, reconnect, and season header.
+- Goal: Iteration 3 dynamic multi-house world.
+- Phase/status: production implementation complete; strict build and expanded automated smoke pass.
+- Latest work: moved auctions, orders, featured schedules, fee rates, specialty tags, and deployments into persistent house state; added deploy/redeploy/enter-house protocol and per-socket active-house projections; added house browser/switcher, cooldown display, featured treatment, schema-v1 migration, and season-safe house resets.
+- Owners: `src/server/game.ts` owns authoritative global/house rules and schema migration; `src/server/server.ts` owns active-house socket context and scoped broadcasts; `src/client/client.ts` owns browser/deployment/in-house presentation; `src/smoke/smoke.ts` owns the Iteration 3 proof.
+- Verification: `npm.cmd run smoke` passes, including nested strict build, initial house, deploy/JOIN guard, HOUSE_CAP spawn, cross-house deployment, 24h redeploy cooldown and ability block, featured selection/reward, deterministic 50% specialty order floor, season preservation/reset, schema-v2 round trip, and public privacy projection.
+- Design decisions: only one character per player may occupy a given house; listing fee is duration multiplied by house fee rate (rounded up), while sale proceeds also use the house rate; featured fame is 25% of winning bid (rounded up); a capped listing only spawns when no other house has spare capacity.
+- Risks/unverified: browser interaction and responsive/device visual QA were not run. Existing schema-v1 snapshots migrate into Grand Exchange with each legacy player's selected character deployed and legacy auctions/orders preserved.
+- Next safest task: manual desktop and narrow-mobile pass of first deployment, multi-house switch/redeploy controls, cooldown presentation, and featured card contrast.

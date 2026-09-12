@@ -8,31 +8,31 @@ export interface AbilityDefinition { id: string; name: string; description: stri
 export interface OrderTemplate { tag?: string; category?: Category; tierMin: number; count: number; fakeAllowed: boolean }
 export interface Order { id: string; template: OrderTemplate; reward: { fame: number; coins: number; xp: number }; fulfilledBy?: string }
 export interface Bid { playerId: string; amount: number; ts: number }
-export interface Auction { id: string; itemId: string; sellerId: string; bids: Bid[]; endsAt: number; featured: boolean; shield?: { playerId: string; until: number }; taxRate?: number; blocked?: string[] }
+export interface Auction { id: string; itemId: string; sellerId: string; bids: Bid[]; endsAt: number; featured: boolean; listingFeePaid: number; shield?: { playerId: string; until: number }; taxRate?: number; blocked?: string[] }
 export interface Player { id: string; name: string; characterId: string; coins: number; inventory: string[]; xp: number; fame: number; abilities: Record<string, { readyAt: number; uses: number }>; boxes: number; fameMilestones: number[] }
 export interface Account { id: string; username: string; usernameKey: string; passwordHash: string; salt: string; characterId?: string }
 export interface AuthToken { token: string; playerId: string; expiresAt: number }
 export interface Season { number: number; startedAt: number; endsAt: number; phase: "active" | "ending" | "break" }
+export interface Deployment { playerId: string; characterId: string; xp: number; redeployCooldownUntil: number; houseId?: string }
+export interface HouseState { id: string; name: string; specialtyTag: string | null; feeRate: number; primeHour: number; auctions: Auction[]; orders: Order[]; deployments: Deployment[]; nextFeaturedAt: number }
 export interface PublicPlayer { id: string; name: string; characterId: string; xp: number; fame: number }
 export interface PublicAuction { id: string; item: PublicItem; bids: Bid[]; endsAt: number; featured: boolean; currentBid: number; minBid: number }
-export interface PublicState { players: PublicPlayer[]; auctions: PublicAuction[]; orders: Order[]; characters: Character[]; abilities: AbilityDefinition[]; season: Season; serverTime: number }
-export interface PrivateState { player: Player; items: Item[]; peeked: Record<string, boolean> }
-export interface GameSnapshot { schemaVersion: 1; accounts: Account[]; tokens: AuthToken[]; players: Player[]; items: Item[]; auctions: Auction[]; orders: Order[]; peeks: Array<[string, Array<[string, boolean]>]>; season: Season }
+export interface PublicDeployment extends Deployment { playerName: string }
+export interface HouseSummary { id: string; name: string; specialtyTag: string | null; feeRate: number; primeHour: number; memberCount: number; heat: number; liveAuctions: number; liveOrders: number }
+export interface PublicHouseDetail extends HouseSummary { auctions: PublicAuction[]; orders: Order[]; members: PublicDeployment[] }
+export interface PublicState { houses: HouseSummary[]; currentHouse?: PublicHouseDetail; players: PublicPlayer[]; characters: Character[]; abilities: AbilityDefinition[]; season: Season; serverTime: number }
+export interface PrivateState { player: Player; items: Item[]; peeked: Record<string, boolean>; deployments: Deployment[]; currentHouseId?: string }
+export interface GameSnapshot { schemaVersion: 2; accounts: Account[]; tokens: AuthToken[]; players: Player[]; items: Item[]; houses: HouseState[]; peeks: Array<[string, Array<[string, boolean]>]>; season: Season }
 export type ClientMessage =
-  | { type: "AUTH"; token: string }
-  | { type: "JOIN"; characterId: string }
-  | { type: "OPEN_BOX" }
-  | { type: "LIST_ITEM"; itemId: string; durationSec: number }
-  | { type: "BID"; auctionId: string; amount: number }
+  | { type: "AUTH"; token: string } | { type: "JOIN"; characterId?: string }
+  | { type: "DEPLOY"; houseId: string; characterId: string } | { type: "REDEPLOY"; characterId: string; toHouseId: string }
+  | { type: "ENTER_HOUSE"; houseId: string } | { type: "HOUSE_LIST" } | { type: "OPEN_BOX" }
+  | { type: "LIST_ITEM"; itemId: string; durationSec: number } | { type: "BID"; auctionId: string; amount: number }
   | { type: "FULFILL_ORDER"; orderId: string; itemIds: string[] }
-  | { type: "USE_ABILITY"; abilityId: string; auctionId?: string; targetPlayerId?: string }
-  | { type: "PING" };
+  | { type: "USE_ABILITY"; abilityId: string; auctionId?: string; targetPlayerId?: string } | { type: "PING" };
 export type ServerMessage =
-  | { type: "AUTH_OK"; playerId: string; needsCharacter: boolean }
-  | { type: "WELCOME"; playerId: string; privateState: PrivateState }
-  | { type: "STATE"; publicState: PublicState }
-  | { type: "PRIVATE"; privateState: PrivateState; message?: string }
-  | { type: "ANNOUNCEMENT"; message: string }
-  | { type: "SEASON_END"; number: number }
-  | { type: "PONG"; ts: number }
-  | { type: "ERROR"; message: string };
+  | { type: "AUTH_OK"; playerId: string; needsCharacter: boolean } | { type: "WELCOME"; playerId: string; privateState: PrivateState }
+  | { type: "HOUSE_LIST"; houses: HouseSummary[] } | { type: "STATE"; publicState: PublicState }
+  | { type: "PRIVATE"; privateState: PrivateState; message?: string } | { type: "FEATURED"; houseId: string; auctionId: string }
+  | { type: "ANNOUNCEMENT"; message: string } | { type: "SEASON_END"; number: number }
+  | { type: "PONG"; ts: number } | { type: "ERROR"; message: string };
