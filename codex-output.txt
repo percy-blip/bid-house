@@ -1,0 +1,38 @@
+Implemented the full Bid House MVP vertical slice.
+
+Created:
+
+- `package.json`, `package-lock.json`, `tsconfig.json`, `.gitignore`
+- `README.md`, `CODEX_HANDOFF.md`
+- `scripts/copy-static.mjs`
+- `src/shared/types.ts`
+- `src/server/content.ts`
+- `src/server/game.ts`
+- `src/server/server.ts`
+- `src/client/index.html`
+- `src/client/styles.css`
+- `src/client/client.ts`
+- `src/smoke/smoke.ts`
+
+Verification passed:
+
+- `npm install` — 0 vulnerabilities
+- `npm run build` — clean strict TypeScript build
+- Static server — HTTP 200
+- `npm run smoke` — exit code 0
+- No commits created
+
+Exact smoke result:
+
+```text
+SMOKE PASS: 2 players joined; 2 boxes opened; item listed; bid placed; Bid Shield used; auction settled; winner received item; order fulfilled; public privacy checked; 0 protocol errors.
+```
+
+Deviations: none from the functional brief. Automated browser visual inspection was unavailable because no browser surface was connected, so final cross-browser/mobile visual QA remains manual. The pre-existing untracked `.hermes/` directory was left untouched.
+
+Handoff status:
+
+- `CODEX_HANDOFF.md` updated.
+- `DEBUG_HANDOFF.md` was unnecessary; no repeated unresolved defects.
+- Current phase: completed MVP vertical slice.
+- Next recommended check: manual two-browser playtest at desktop and narrow mobile widths.
