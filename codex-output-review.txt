@@ -1,0 +1,14 @@
+Created [docs/UI_REVIEW.md](C:/Users/Crimson/Projects/bid-house/docs/UI_REVIEW.md).
+
+1. Recapture actual hall and reveal screens; supplied captures duplicate character select.
+2. Restore readable gold SVG branding and functional icons.
+3. Fix primary-button hover and pressed contrast.
+4. Preserve bidder selection and synchronize carousel navigation.
+5. Correct mobile safe areas, touch targets, and hidden controls.
+6. Strengthen auction hierarchy, bid information, and inline confirmation.
+7. Normalize portrait framing and constrain oversized house cards.
+8. Wire missing bid, ability, extension, and settlement feedback.
+9. Give box reveals distinct opening and reward-resolution stages.
+10. Compress mobile branding to prioritize login and registration.
+
+**Bug count: 6 — 5 product defects, 1 screenshot/QA defect.** No game files changed; no commit.

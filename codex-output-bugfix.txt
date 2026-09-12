@@ -1,0 +1,13 @@
+BUG-01 — fixed: all monochrome UI SVGs now use colored CSS masks; screenshots show gold/gem icons.
+
+BUG-02 — fixed: primary hover, pressed, and focus states retain gold backgrounds with dark text; hover styling is pointer-aware.
+
+BUG-03 — fixed: taps, arrows, and swipe snapping synchronize the rendered card, counter, and selection; QA cycled through all six bidders.
+
+BUG-04 — fixed: `viewport-fit=cover` added; safe-area inset moved below mobile nav and matching content clearance reserved.
+
+BUG-05 — fixed: QA selected Brick, carried him through house selection, and deployed without a second selection.
+
+BUG-06 — fixed: screen/population assertions now gate every capture; 06, 09, and 10 show auction layouts and have distinct SHA-256 hashes from character select.
+
+`npm run build`, `npm run smoke`, and `npm run verify-assets` all pass. No commit created.
