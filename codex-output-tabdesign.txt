@@ -1,0 +1,3 @@
+Created [docs/TAB_DESIGN.md](docs/TAB_DESIGN.md) with five-tab content specs, mobile navigation, verified server/API gaps, privacy audit, implementation phases, and eight decisions for Percy.
+
+Only the requested Markdown file was added. No application code, CSS, or assets changed.
