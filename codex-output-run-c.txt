@@ -1,0 +1,35 @@
+Implemented the five-tab client overhaul.
+
+Changed:
+
+- [client.ts](C:/Users/Crimson/Projects/bid-house/src/client/client.ts) — routing, all five views, WebSocket projections, filters, dialogs, preserved tab state.
+- [index.html](C:/Users/Crimson/Projects/bid-house/src/client/index.html) — new application shell and navigation.
+- [styles.css](C:/Users/Crimson/Projects/bid-house/src/client/styles.css) — responsive noir art-deco layouts and mobile bottom navigation.
+- [qa-shots.mjs](C:/Users/Crimson/Projects/bid-house/qa-shots.mjs) — desktop/mobile coverage for every tab.
+- [CODEX_HANDOFF.md](C:/Users/Crimson/Projects/bid-house/CODEX_HANDOFF.md) — implementation and verification handoff.
+
+Per-tab delivery:
+
+- Bidder: roster, per-bidder level/XP, deployments, abilities, pulls, move, recall, details.
+- Inventory: search/category/tier/tag filters, box auto-buy/open, authenticity ribbon, listing, order and market links.
+- Order: deployed-house scope, house/fulfillable filters, penalty-aware XP, exact-count fulfillment sheet.
+- Market record: current-season template table, zero-sale rows, anonymous paginated detail.
+- Trade house: privacy-safe directory, staffed-house floor, desktop 3|6|3 layout and stacked mobile layout.
+
+Verification:
+
+- `npm run build` — passed.
+- `npm run smoke` — passed all UI bundle, model, WebSocket, privacy, roster, recall, XP, market, and order assertions.
+- `node qa-shots.mjs` — passed at 1440×900 and 390×844.
+- JavaScript errors: 0.
+- Broken images: 0.
+- Horizontal overflow: 0.
+
+Contract issue: `JOIN { characterId }` is declared but the server ignores `characterId`, and an idle new player cannot exist before their first deployment. Server semantics were left unchanged. Onboarding therefore selects the free bidder and first house together, then lands on Bidder.
+
+Handoff status:
+
+- `CODEX_HANDOFF.md` updated.
+- `DEBUG_HANDOFF.md` not needed; no unresolved repeated defect.
+- No new assets or dependencies.
+- The existing untracked `.hermes/codex-run-c-brief.md` was left untouched.

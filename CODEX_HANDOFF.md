@@ -1,11 +1,10 @@
 # Bid House handoff
 
-- Goal: Run S server foundation for the locked five-tab model in `docs/TAB_DESIGN.md`.
-- Phase/status: production server slice complete; strict build and model/WebSocket smoke pass.
-- Latest work: added schema v3 with loud v1/v2 migration, owned bidder rosters and paid pulls, true recall/move lock, seasonal per-bidder XP/levels, configurable box auto-buy, season market ledger/read models, member-order aggregation, privacy projections, scoped settlement notes, and all-session account refresh.
-- Owners: `src/shared/types.ts` owns protocol/persistence DTOs; `src/server/game.ts` owns authoritative rules and projections; `src/server/server.ts` owns socket scoping and refresh; `src/smoke/smoke.ts` owns contract coverage.
-- Compatibility: legacy session-house commands remain valid; mutations additionally accept explicit `houseId`. Legacy account `xp` remains persisted but receives no gameplay XP. Global players now intentionally expose only id/name/fame.
-- Verification: `npm.cmd run build` passes; `npm.cmd run smoke` passes with UI BUNDLE, MODEL, WS, and final SMOKE PASS lines.
-- Privacy: public auction items use an explicit id/name/category/tier/tags/art allowlist; member orders include only deployed houses; settlement notes route only to current house members and participants; hidden-target failures use a non-oracular message.
-- Persistence: rosters survive season reset; per-bidder XP and the anonymous ledger reset each season; recalled bidder XP survives idle/redeploy within the season; settlement IDs dedupe ledger writes.
-- Next safest task: implement the five-tab client against the additive CONFIG, MEMBER_ORDERS, MARKET_SUMMARY, MARKET_HISTORY, PULL_BIDDER, and RECALL contracts.
+- Goal: Run C five-tab client per `docs/TAB_DESIGN.md`, backed by the Run S contracts.
+- Phase/status: production client overhaul complete; strict build, server smoke, and desktop/mobile browser QA pass.
+- Latest work: replaced the hall shell with hash-routed Bidder, Inventory, Order, Market record, and Trade house destinations; retained the hall as a staffed-house detail; added roster/deployment management, filters and selection sheets, market pagination, responsive bottom navigation, and input/filter/scroll state that is not reset by server frames.
+- Owners: `src/client/client.ts` owns client read models, routing, actions, and transient state; `src/client/styles.css` owns responsive noir art-deco presentation; `qa-shots.mjs` owns browser acceptance evidence. Run S server files remain unchanged.
+- Verification: `npm.cmd run build` passes; `npm.cmd run smoke` passes (UI BUNDLE, MODEL, WS, SMOKE); `node qa-shots.mjs` passes at 1440x900 and 390x844 with all five tabs, inventory empty/populated state, box reveal, market detail, and house floor.
+- QA result: 0 JavaScript errors, 0 broken images, and 0 horizontal-overflow failures.
+- Contract note: the declared `JOIN { characterId }` is ignored by the server and idle accounts cannot be created before deployment. Onboarding therefore keeps the existing first-bidder + first-house deployment transaction, then lands on Bidder as required.
+- Next safest task: review generated screenshots in `qa-shots/` and run a human interaction pass for recall confirmation, redeploy lock expiry, exact-count multi-item orders, and market histories with real sales.
